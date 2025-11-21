@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: radial-gradient(
+      ellipse at 20% 20%,
+      rgba(255, 77, 196, 0.12),
+      transparent 38%
+    ),
+    radial-gradient(ellipse at 80% 0%, rgba(59, 232, 255, 0.14), transparent 42%),
+    #050312;
+  color: #e5e7eb;
+  font-family: var(--font-geist-sans), system-ui, -apple-system, "Segoe UI",
+    sans-serif;
+  min-height: 100vh;
+}
+
+@layer components {
+  .slot-cell {
+    @apply relative flex h-28 items-center justify-center overflow-hidden rounded-2xl border text-center transition duration-200 ease-out;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.38);
+  }
+
+  .slot-cell::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.2),
+      rgba(255, 255, 255, 0) 60%
+    );
+    opacity: 0.12;
+    transition: opacity 200ms ease;
+  }
+
+  .slot-cell.payline {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15),
+      0 12px 35px rgba(0, 0, 0, 0.4),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  }
+
+  .slot-cell.payline::after {
+    opacity: 0.28;
+  }
+
+  .text-shadow-lg {
+    text-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+  }
+}
+
+canvas {
+  height: 100%;
+  width: 100%;
+}
