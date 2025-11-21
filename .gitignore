@@ -1,0 +1,8 @@
+# Docker
+nginx/logs/*.log
+
+# Environment
+.env
+.env.local
+.env.production
+
