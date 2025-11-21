@@ -1,4 +1,4 @@
-# Multi-stage build для оптимизации размера образа
+# Multi-stage build для статического Next.js приложения
 
 # Стадия 1: Сборка приложения
 FROM node:20-alpine AS builder
@@ -15,33 +15,26 @@ RUN npm ci --only=production=false || yarn install --frozen-lockfile
 # Копируем исходный код
 COPY . .
 
-# Собираем приложение
+# Собираем приложение (создаст папку out с HTML файлами)
 RUN npm run build || yarn build
 
-# Стадия 2: Production образ
-FROM node:20-alpine AS runner
+# Стадия 2: Production образ с nginx
+FROM nginx:alpine
 
-WORKDIR /app
+# Копируем статические файлы из сборки
+COPY --from=builder /app/out /usr/share/nginx/html
 
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
+# Копируем конфигурацию nginx
+COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
 
-# Создаем непривилегированного пользователя
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+# Создаем директорию для логов
+RUN mkdir -p /var/log/nginx
 
-# Копируем необходимые файлы из builder
-# В standalone режиме Next.js создает все необходимое в .next/standalone
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# Открываем порт
+EXPOSE 80
 
-USER nextjs
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --quiet --tries=1 --spider http://localhost/health || exit 1
 
-EXPOSE 3000
-
-ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
-
-CMD ["node", "server.js"]
-
+CMD ["nginx", "-g", "daemon off;"]

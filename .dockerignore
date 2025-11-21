@@ -6,7 +6,7 @@ yarn-error.log*
 
 # Next.js
 .next
-out
+# out - не исключаем, так как создается во время сборки
 build
 
 # Testing
