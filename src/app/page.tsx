@@ -432,6 +432,7 @@ const Reel = ({
   );
   const reelWin = winningMap[index];
   const MEDIA_ASSETS: Record<string, { image: string; video?: string }> = {
+    wild: { image: "/assets/images/wild.png", video: "/assets/videos/wild.mp4" },
     seven: { image: "/assets/images/7.jpg", video: "/assets/videos/7.mp4" },
     cherry: { image: "/assets/images/cherry.jpg", video: "/assets/videos/cherry.mp4" },
     bell: { image: "/assets/images/bell.jpg", video: "/assets/videos/bell.mp4" },
